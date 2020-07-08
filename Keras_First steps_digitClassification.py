@@ -17,8 +17,8 @@ It’s simple: given an image, classify it as a digit.
 
 import numpy as np
 import mnist
-from keras.models import Sequential
-from keras.layers import Dense
+from tensorflow import keras
+from tensorflow.keras import layers
 from keras.utils import to_categorical
 
 train_images = mnist.train_images()
@@ -34,24 +34,50 @@ test_images = (test_images / 255) - 0.5
 train_images = train_images.reshape((-1, 784))
 test_images = test_images.reshape((-1, 784))
 
+# NN
+
 # Build the model
-model = Sequential([
-  Dense(64, activation='relu', input_shape=(784,)),
-  Dense(64, activation='relu'),
-  Dense(10, activation='softmax'),
-])
+
+'''
+Activation functions:
+    - linear
+    - sigmoid
+    - tanh
+    - relu
+    - lrelu
+    - softmax -> outputlayer that sum of probabilities = 1
+'''
+
+model = keras.Sequential()
+model.add(layers.Dense(64, activation="sigmoid", input_shape=(784,)))
+model.add(layers.Dense(64, activation="sigmoid"))
+model.add(layers.Dense(10,  activation="softmax"))
 
 # Compile the model
+
+'''
+Optimizer:
+    Most common -----
+    - SGD (slowest optimizer)
+    - rmsprop
+    - adam
+    
+    More -----
+    - Adadelta
+    - Adagrad
+    - Adamax
+    - Nadam
+    - Ftrl
+'''
+
 model.compile(
   optimizer='adam',
   loss='categorical_crossentropy',
-  metrics=['accuracy'],
-)
+  metrics=['accuracy'])
 
 # Train the model
 model.fit(
   train_images,
   to_categorical(train_labels),
-  epochs=10,
-  batch_size=32,
-)
+  epochs=5,
+  batch_size=32)
